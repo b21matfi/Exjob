@@ -1,26 +1,44 @@
 ﻿@page "/counter"
 @inject IJSRuntime JSRuntime
+@inject CompileService CompileService
+
 
     <textarea id="JavaScripttext" name="javascriptCode" placeholder="JavaScript code" spellcheck="false"></textarea>
-    <textarea id="C#" name="C#code" placeholder="C# code" spellcheck="false"></textarea>
+<textarea id="C#" class="C#" name="C#code" placeholder="C# code" spellcheck="false" bind="csCode"></textarea>
     <button type ="submit" @onclick="Run"> run</button>
 
 <div class="iframe-container split">
     <iframe id="javascriptViewer"></iframe>
-    <iframe id="csharpViewer"></iframe>
+    <iframe id="csharpViewer" bind="ResultText"></iframe>
+    
 </div>
 
 
 @code {
+    private string csCode { get; set; }
+    private string ResultText { get; set; }
+    private string tester;
 
     private async Task Run()
     {
+
+        tester = csCode;
+        Console.WriteLine(tester);
         await UpdateJavaScript();
+        await UpdateCSharp();
     }
     private async Task UpdateJavaScript()
     {
         Console.WriteLine(JSRuntime.InvokeVoidAsync("displayJavaScriptOutput"));
         await JSRuntime.InvokeVoidAsync("displayJavaScriptOutput");
+    }
+    private async Task UpdateCSharp()
+    {
+            CompileService.CompileLog = new List<string>();
+            ResultText = await CompileService.CompileAndRun(tester);
+            Console.WriteLine(ResultText);
+            this.StateHasChanged();
+        
     }
 
 }

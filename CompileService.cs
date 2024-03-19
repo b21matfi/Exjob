@@ -143,7 +143,7 @@ namespace Services
             }
 
             CompileLog.Add("Parse SyntaxTree Success");
-
+            
             CSharpCompilation compilation = CSharpCompilation.Create(code, new[] { syntaxTree },
                 references, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 

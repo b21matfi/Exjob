@@ -4,19 +4,21 @@
 
 
     <textarea id="JavaScripttext" name="javascriptCode" placeholder="JavaScript code" spellcheck="false"></textarea>
-<textarea id="C#" class="C#" name="C#code" placeholder="C# code" spellcheck="false" bind="csCode"></textarea>
+<textarea id="C#" class="C#" name="C#code" placeholder="C# code" spellcheck="false" @bind="csCode"></textarea>
     <button type ="submit" @onclick="Run"> run</button>
 
 <div class="iframe-container split">
     <iframe id="javascriptViewer"></iframe>
-    <iframe id="csharpViewer" bind="ResultText"></iframe>
-    
+    <iframe id="csharpViewer" @bind="ResultText"></iframe>
+    <pre>@ResultText</pre>
+    <pre>@CompileText</pre>
 </div>
 
 
 @code {
     private string csCode { get; set; }
     private string ResultText { get; set; }
+    private string CompileText { get; set; }
     private string tester;
 
     private async Task Run()
@@ -34,11 +36,24 @@
     }
     private async Task UpdateCSharp()
     {
+        try
+        {
             CompileService.CompileLog = new List<string>();
-            ResultText = await CompileService.CompileAndRun(tester);
+            ResultText = await CompileService.CompileAndRun(csCode);
             Console.WriteLine(ResultText);
+        }
+        catch(Exception e)
+        {
+            CompileService.CompileLog.Add(e.Message);
+            CompileService.CompileLog.Add(e.StackTrace);
+            throw;
+
+        }
+        finally
+        {
+            CompileText = string.Join("\r\n", CompileService.CompileLog);
             this.StateHasChanged();
-        
+        }
     }
 
 }

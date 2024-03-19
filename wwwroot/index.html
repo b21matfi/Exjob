@@ -14,7 +14,6 @@
 
 <body>
     <div id="app">
-        <p>test</p>
         <svg class="loading-progress">
             <circle r="40%" cx="50%" cy="50%" />
             <circle r="40%" cx="50%" cy="50%" />
@@ -31,3 +30,16 @@
 </body>
 
 </html>
+<script>
+    window.addEventListener('load', () => {
+        window.displayJavaScriptOutput = function displayJavaScriptOutput() {
+            let JavaScript = document.getElementById("JavaScripttext").value;
+            let iframe = document.getElementById("javascriptViewer").contentWindow.document;
+            iframe.open();
+            iframe.write(JavaScript);
+            console.log(iframe);
+            console.log("executeJavaScript");
+
+        };
+    });
+</script>

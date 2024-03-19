@@ -1,18 +1,28 @@
 ﻿@page "/counter"
+@inject IJSRuntime JSRuntime
 
-<PageTitle>Counter</PageTitle>
+    <textarea id="JavaScripttext" name="javascriptCode" placeholder="JavaScript code" spellcheck="false"></textarea>
+    <textarea id="C#" name="C#code" placeholder="C# code" spellcheck="false"></textarea>
+    <button type ="submit" @onclick="Run"> run</button>
 
-<h1>Counter</h1>
+<div class="iframe-container split">
+    <iframe id="javascriptViewer"></iframe>
+    <iframe id="csharpViewer"></iframe>
+</div>
 
-<p role="status">Current count: @currentCount</p>
-
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
 @code {
-    private int currentCount = 0;
 
-    private void IncrementCount()
+    private async Task Run()
     {
-        currentCount++;
+        await UpdateJavaScript();
     }
+    private async Task UpdateJavaScript()
+    {
+        Console.WriteLine(JSRuntime.InvokeVoidAsync("displayJavaScriptOutput"));
+        await JSRuntime.InvokeVoidAsync("displayJavaScriptOutput");
+    }
+
 }
+
+

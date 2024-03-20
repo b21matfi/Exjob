@@ -23,11 +23,28 @@
 
     private async Task Run()
     {
-
-        tester = csCode;
-        Console.WriteLine(tester);
         await UpdateJavaScript();
-        await UpdateCSharp();
+        try
+        {
+            CompileService.CompileLog = new List<string>();
+            ResultText = await CompileService.CompileAndRun(csCode);
+            Console.WriteLine("result" + ResultText);
+        }
+        catch (Exception e)
+        {
+            CompileService.CompileLog.Add(e.Message);
+            CompileService.CompileLog.Add(e.StackTrace);
+            throw;
+
+        }
+        finally
+        {
+            CompileText = string.Join("\r\n", CompileService.CompileLog);
+            //await JSRuntime.InvokeVoidAsync("displayCsharpOutput", ResultText);
+            this.StateHasChanged();
+        }
+
+       // await UpdateCSharp();
     }
     private async Task UpdateJavaScript()
     {

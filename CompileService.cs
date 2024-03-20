@@ -49,82 +49,6 @@ namespace Services
                 }
             }
         }
-
-        /*
-        public async Task<Type> CompileBlazor(string code)
-        {
-            CompileLog.Add("Create fileSystem");
-
-            var fileSystem = new EmptyRazorProjectFileSystem();
-
-            CompileLog.Add("Create engine");
-            //            Microsoft.AspNetCore.Blazor.Build.
-
-            var engine = RazorProjectEngine.Create(RazorConfiguration.Create(RazorLanguageVersion.Version_3_0, "Blazor", new RazorExtension[0]), fileSystem, b =>
-            {
-                //                RazorExtensions.Register(b);
-
-
-                //                b.SetRootNamespace(DefaultRootNamespace);
-
-                // Turn off checksums, we're testing code generation.
-                //                b.Features.Add(new SuppressChecksum());
-
-                //                if (LineEnding != null)
-                //                {
-                //                    b.Phases.Insert(0, new ForceLineEndingPhase(LineEnding));
-                //                }
-
-                // Including MVC here so that we can find any issues that arise from mixed MVC + Components.
-                //                Microsoft.AspNetCore.Mvc.Razor.Extensions.RazorExtensions.Register(b);
-                //
-                //                // Features that use Roslyn are mandatory for components
-                //                Microsoft.CodeAnalysis.Razor.CompilerFeatures.Register(b);
-                //
-                //                b.Features.Add(new CompilationTagHelperFeature());
-                //                b.Features.Add(new DefaultMetadataReferenceFeature()
-                //                {
-                //                    References = references,
-                //                });
-
-
-
-            });
-
-
-            CompileLog.Add("Create file");
-            var file = new MemoryRazorProjectItem(code, true, "/App", "/App/App.razor");
-            CompileLog.Add("File process and GetCSharpDocument");
-            var doc = engine.Process(file).GetCSharpDocument();
-            CompileLog.Add("Get GeneratedCode");
-            var csCode = doc.GeneratedCode;
-
-            CompileLog.Add("Read Diagnostics");
-            foreach (var diagnostic in doc.Diagnostics)
-            {
-                CompileLog.Add(diagnostic.ToString());
-            }
-
-            if (doc.Diagnostics.Any(i => i.Severity == RazorDiagnosticSeverity.Error))
-            {
-                return null;
-            }
-
-            CompileLog.Add(csCode);
-
-            CompileLog.Add("Compile assembly");
-            var assembly = await Compile(csCode);
-
-            if (assembly != null)
-            {
-                CompileLog.Add("Search Blazor component");
-                return assembly.GetExportedTypes().FirstOrDefault(i => i.IsSubclassOf(typeof(ComponentBase)));
-            }
-
-            return null;
-        }
-        */
-
         public async Task<Assembly> Compile(string code)
         {
             Console.WriteLine("compile code : " + code);
@@ -173,22 +97,6 @@ namespace Services
 
             return null;
         }
-
-
-        //        public class CollectibleAssemblyLoadContext : AssemblyLoadContext
-        //        {
-        //            public CollectibleAssemblyLoadContext() : base()
-        //            {
-        //            }
-        //
-        //
-        //            protected override Assembly Load(AssemblyName assemblyName)
-        //            {
-        //                return null;
-        //            }
-        //        }
-
-
         public async Task<string> CompileAndRun(string code)
         {
             await Init();
@@ -197,7 +105,7 @@ namespace Services
             if (assemby != null)
             {
                 var type = assemby.GetExportedTypes().FirstOrDefault();
-                var methodInfo = type.GetMethod("UpdateCSharp");
+                var methodInfo = type.GetMethod("Run");
                 var instance = Activator.CreateInstance(type);
                 return (string)methodInfo.Invoke(instance, new object[] { "my UserName", 12 });
             }

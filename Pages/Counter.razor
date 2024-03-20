@@ -31,10 +31,9 @@
     }
     private async Task UpdateJavaScript()
     {
-        Console.WriteLine(JSRuntime.InvokeVoidAsync("displayJavaScriptOutput"));
         await JSRuntime.InvokeVoidAsync("displayJavaScriptOutput");
     }
-    private async Task UpdateCSharp()
+    public async Task UpdateCSharp()
     {
         try
         {
@@ -52,6 +51,7 @@
         finally
         {
             CompileText = string.Join("\r\n", CompileService.CompileLog);
+            //await JSRuntime.InvokeVoidAsync("displayCsharpOutput", ResultText);
             this.StateHasChanged();
         }
     }

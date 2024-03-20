@@ -197,7 +197,7 @@ namespace Services
             if (assemby != null)
             {
                 var type = assemby.GetExportedTypes().FirstOrDefault();
-                var methodInfo = type.GetMethod("Run");
+                var methodInfo = type.GetMethod("UpdateCSharp");
                 var instance = Activator.CreateInstance(type);
                 return (string)methodInfo.Invoke(instance, new object[] { "my UserName", 12 });
             }

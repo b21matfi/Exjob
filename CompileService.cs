@@ -68,7 +68,7 @@ namespace Services
 
             CompileLog.Add("Parse SyntaxTree Success");
             
-            CSharpCompilation compilation = CSharpCompilation.Create(code, new[] { syntaxTree },
+            CSharpCompilation compilation = CSharpCompilation.Create("Examensarbete", new[] { syntaxTree },
                 references, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
             using (MemoryStream stream = new MemoryStream())
@@ -107,7 +107,7 @@ namespace Services
                 var type = assemby.GetExportedTypes().FirstOrDefault();
                 var methodInfo = type.GetMethod("Run");
                 var instance = Activator.CreateInstance(type);
-                return (string)methodInfo.Invoke(instance, new object[] { "my UserName", 12 });
+                return (string)methodInfo.Invoke(instance, new object[] {});
             }
 
             return null;

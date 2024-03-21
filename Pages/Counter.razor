@@ -25,27 +25,7 @@
     private async Task Run()
     {
         await UpdateJavaScript();
-        try
-        {
-            CompileService.CompileLog = new List<string>();
-            ResultText = await CompileService.CompileAndRun(csCode);
-            Console.WriteLine("result" + ResultText);
-        }
-        catch (Exception e)
-        {
-            CompileService.CompileLog.Add(e.Message);
-            CompileService.CompileLog.Add(e.StackTrace);
-            throw;
-
-        }
-        finally
-        {
-            CompileText = string.Join("\r\n", CompileService.CompileLog);
-            //await JSRuntime.InvokeVoidAsync("displayCsharpOutput", ResultText);
-            this.StateHasChanged();
-        }
-
-       // await UpdateCSharp();
+        await UpdateCSharp();
     }
     private async Task UpdateJavaScript()
     {
@@ -70,7 +50,7 @@
         finally
         {
             CompileText = string.Join("\r\n", CompileService.CompileLog);
-            //await JSRuntime.InvokeVoidAsync("displayCsharpOutput", ResultText);
+            await JSRuntime.InvokeVoidAsync("displayCsharpOutput", ResultText);
             this.StateHasChanged();
         }
     }

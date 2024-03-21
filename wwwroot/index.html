@@ -47,7 +47,6 @@
     window.addEventListener('load', () => { 
         window.displayCsharpOutput = function displayCsharpOutput(code) {
             let Csharp = code;
-            console.log("c#: " + Csharp);
             let iframe = document.getElementById("csharpViewer").contentWindow.document;
             iframe.open();
             iframe.write(Csharp);

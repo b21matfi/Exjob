@@ -10,8 +10,6 @@
 <div class="iframe-container split">
     <iframe id="javascriptViewer"></iframe>
     <iframe id="csharpViewer" @bind="ResultText"></iframe>
-    <pre></pre>
-    <pre>@ResultText</pre>
     <pre>@CompileText</pre>
 </div>
 
@@ -20,7 +18,6 @@
     private string csCode { get; set; }
     private string ResultText { get; set; }
     private string CompileText { get; set; }
-    private string tester;
 
     private async Task Run()
     {

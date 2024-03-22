@@ -3,7 +3,7 @@
 @inject CompileService CompileService
 
 
-    <textarea id="JavaScripttext" name="javascriptCode" placeholder="JavaScript code" spellcheck="false"></textarea>
+    <textarea id="JavaScripttext" name="javascriptCode" placeholder="JavaScript code" spellcheck="false" @bind="JsCode"></textarea>
     <textarea id="C#" class="C#" name="C#code" placeholder="C# code" spellcheck="false" @bind="csCode"></textarea>
     <button type ="submit" @onclick="Run"> run</button>
 
@@ -16,13 +16,24 @@
 
 @code {
     private string csCode { get; set; }
+    private string JsCode = "";
     private string ResultText { get; set; }
     private string CompileText { get; set; }
 
     private async Task Run()
     {
-        await UpdateJavaScript();
-        await UpdateCSharp();
+        Console.WriteLine("CsCode: " + csCode + " Jscode: " + JsCode);
+        if (JsCode != "")
+        {
+            Console.WriteLine("JsCode not null");
+            await UpdateJavaScript();
+        }
+        else if (csCode != null && csCode != "")
+        {
+            Console.WriteLine("csCode not null");
+            await UpdateCSharp();
+        }
+
     }
     private async Task UpdateJavaScript()
     {

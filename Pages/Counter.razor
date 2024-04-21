@@ -8,12 +8,15 @@
     private string JsCode = "";
     private string ResultText { get; set; }
     private string CompileText { get; set; }
+    private int maxCount = 100;
+    private int currentCount = 0;
+    private int numA;
+    Random rnd = new Random();
+    private string example;
+    private string quete = "\"";
 
     private async Task Run()
     {
-        JsCode = await JSRuntime.InvokeAsync<String>("getJSText");
-        csCode = await JSRuntime.InvokeAsync<String>("getCText");
-        
         Console.WriteLine("CsCode: " + csCode + " Jscode: " + JsCode);
         if (JsCode != "")
         {
@@ -25,6 +28,61 @@
             Console.WriteLine("csCode not null");
             await UpdateCSharp();
         }
+
+    }
+    private async Task GenJsMath()
+    {
+        numA = rnd.Next(1, 101);
+        example = "<p id='demo'></p> <script> document.getElementById('demo').innerHTML = liveProgramming(); function liveProgramming() { let number = " + numA + ";  let guess = number / 2;  let precision = 0.0001; while (Math.abs(guess * guess - number) > precision) { guess = (guess + number / guess) / 2; } let sqrt = guess; let result = `Square root of ${number} is ${sqrt}`;  return result;}</script>";
+        JsCode = example;
+
+    }
+    private async Task GenJsSentence()
+    { 
+        example = "<p id='demo'></p> <script> document.getElementById('demo').innerHTML = " + quete + Faker.Lorem.Paragraph() + quete + "</script>";
+        JsCode = example;
+    }
+    private async Task GenCsharpSentence()
+    {
+        example = "using System.Text; namespace tester { public class RunClass { public string Run() { var sb = new StringBuilder(); sb.AppendLine(" + quete + Faker.Lorem.Paragraph() +quete + ");  return sb.ToString(); } } }";
+        csCode = example;
+    }
+    private async Task GenCsharpMath()
+    {
+        numA = rnd.Next(1, 101);
+        example = "using System.Text;using System;namespace tester{public class RunClass{public string Run(){double number = " + numA + ";double guess = number / 2;double precision = 0.0001;while (Math.Abs(guess * guess - number) > precision) { guess = (guess + number / guess) / 2; }double sqrt = guess;var sb = new StringBuilder();sb.AppendLine($" + quete + "Square root of {number} is {sqrt}" + quete +");return sb.ToString();}}}";
+        csCode = example;
+    }
+    private async Task AutoRun()
+    {
+         /* for (currentCount = 0; currentCount < maxCount; currentCount++)
+       {
+           await GenJsMath();
+           await Run();
+
+       }
+       currentCount = 0;
+
+         for (currentCount = 0; currentCount < maxCount; currentCount++)
+         {
+          await GenJsSentence();
+          await Run();
+         }
+      currentCount = 0;
+      for (currentCount = 0; currentCount < maxCount; currentCount++)
+         {
+          await GenCsharpSentence();
+          await Run();
+         }
+      currentCount = 0;
+      for (currentCount = 0; currentCount < maxCount; currentCount++)
+         {
+          await GenCsharpMath();
+          await Run();
+         }
+      currentCount = 0;
+       */
+
 
     }
     private async Task UpdateJavaScript()
@@ -60,6 +118,7 @@
 <textarea id="JavaScripttext" name="javascriptCode" placeholder="JavaScript code" spellcheck="false" @bind="JsCode"></textarea>
     <textarea id="C#" class="C#" name="C#code" placeholder="C# code" spellcheck="false" @bind="csCode"></textarea>
     <button type ="submit" @onclick="Run"> run</button>
+    <button type="submit" @onclick="AutoRun"> AutoRun (@currentCount/@maxCount)</button>
 
 <div class="iframe-container split">
     <iframe id="javascriptViewer"></iframe>

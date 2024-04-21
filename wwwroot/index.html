@@ -31,25 +31,47 @@
 
 </html>
 <script>
+    let startTimes = 0;
+    let endTimes = 0;
+    let totalTime = [];
+
     window.addEventListener('load', () => {
-        window.displayJavaScriptOutput = function displayJavaScriptOutput() {
-            let JavaScript = document.getElementById("JavaScripttext").value;
+        
+        window.displayJavaScriptOutput = function displayJavaScriptOutput(code) {
+            let JavaScript = code;
             let iframe = document.getElementById("javascriptViewer").contentWindow.document;
             iframe.open();
             iframe.write(JavaScript);
-            console.log(iframe);
-            console.log("executeJavaScript");
-
+            iframe.close();
         };
-
-    });
-
-    window.addEventListener('load', () => { 
-        window.displayCsharpOutput = function displayCsharpOutput(code) {
-            let Csharp = code;
-            let iframe = document.getElementById("csharpViewer").contentWindow.document;
-            iframe.open();
-            iframe.write(Csharp);
+  
+    window.displayCsharpOutput = function displayCsharpOutput(code) {
+        let Csharp = code;
+        let iframe = document.getElementById("csharpViewer").contentWindow.document;
+        iframe.open();
+        iframe.write(Csharp);
+        iframe.close();
         };
+        window.endTime = function endTime() {
+            endTimes = new Date().getTime();
+            totalTime.push(parseInt((endTimes) - parseInt(startTimes)));
+            console.log(totalTime);
+        }
+        window.startTime = function startTime() {
+            startTimes = new Date().getTime();
+        }
+        window.downloadTimeFile = function downloadTimeFile() {
+            const csvContent = totalTime.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = 'update_times.csv';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(link.href);
+            totalTime = [];
+        }
+
     });
 </script>

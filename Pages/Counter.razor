@@ -1,4 +1,11 @@
 ﻿@page "/counter"
+@using System;
+@using System.Collections.Generic;
+@using System.Diagnostics;
+@using System.IO;
+@using System.Text;
+@using System.Windows;
+@using System.Net.Http.Json;
 @inject IJSRuntime JSRuntime
 @inject CompileService CompileService
 
@@ -8,23 +15,25 @@
     private string JsCode = "";
     private string ResultText { get; set; }
     private string CompileText { get; set; }
-    private int maxCount = 100;
+    private int maxCount = 1000;
     private int currentCount = 0;
     private int numA;
     Random rnd = new Random();
     private string example;
     private string quete = "\"";
+    Stopwatch stopwatch = new Stopwatch();
+    List<long> timesList = new List<long>();
 
     private async Task Run()
     {
-        Console.WriteLine("CsCode: " + csCode + " Jscode: " + JsCode);
         if (JsCode != "")
         {
             Console.WriteLine("JsCode not null");
             await UpdateJavaScript();
+            Console.WriteLine(timesList.ToString());
         }
         else if (csCode != null && csCode != "")
-        {
+        {          
             Console.WriteLine("csCode not null");
             await UpdateCSharp();
         }
@@ -33,6 +42,7 @@
     private async Task GenJsMath()
     {
         numA = rnd.Next(1, 101);
+        Console.WriteLine(numA);
         example = "<p id='demo'></p> <script> document.getElementById('demo').innerHTML = liveProgramming(); function liveProgramming() { let number = " + numA + ";  let guess = number / 2;  let precision = 0.0001; while (Math.abs(guess * guess - number) > precision) { guess = (guess + number / guess) / 2; } let sqrt = guess; let result = `Square root of ${number} is ${sqrt}`;  return result;}</script>";
         JsCode = example;
 
@@ -55,39 +65,56 @@
     }
     private async Task AutoRun()
     {
-         /* for (currentCount = 0; currentCount < maxCount; currentCount++)
-       {
-           await GenJsMath();
-           await Run();
+        for (currentCount = 0; currentCount < maxCount; currentCount++)
+        {
+            await GenJsMath();
+            await JSRuntime.InvokeVoidAsync("startTime");
+            await Run();
+            await JSRuntime.InvokeVoidAsync("endTime");
+            JsCode = "";
+        }
+        await JSRuntime.InvokeVoidAsync("downloadTimeFile");
+         
+        for (currentCount = 0; currentCount < maxCount; currentCount++)
+        {
+            await GenJsSentence();
+            await JSRuntime.InvokeVoidAsync("startTime");
+            await Run();
+            await JSRuntime.InvokeVoidAsync("endTime");
+            JsCode = "";
+        }
+        await JSRuntime.InvokeVoidAsync("downloadTimeFile");
 
-       }
-       currentCount = 0;
+        for (currentCount = 0; currentCount < maxCount; currentCount++)
+        {
+            await GenCsharpSentence();
+            await JSRuntime.InvokeVoidAsync("startTime");
+            await Run();
+            await JSRuntime.InvokeVoidAsync("endTime"); 
+            csCode = "";
+        }
+        await JSRuntime.InvokeVoidAsync("downloadTimeFile");
 
-         for (currentCount = 0; currentCount < maxCount; currentCount++)
-         {
-          await GenJsSentence();
-          await Run();
-         }
-      currentCount = 0;
-      for (currentCount = 0; currentCount < maxCount; currentCount++)
-         {
-          await GenCsharpSentence();
-          await Run();
-         }
-      currentCount = 0;
-      for (currentCount = 0; currentCount < maxCount; currentCount++)
-         {
-          await GenCsharpMath();
-          await Run();
-         }
-      currentCount = 0;
-       */
+
+        for (currentCount = 0; currentCount < maxCount; currentCount++)
+        {
+            await GenCsharpMath();
+            await JSRuntime.InvokeVoidAsync("startTime");
+            await Run();
+            await JSRuntime.InvokeVoidAsync("endTime");
+            csCode = "";
+
+        }
+        await JSRuntime.InvokeVoidAsync("downloadTimeFile");
+        
+        
+
 
 
     }
     private async Task UpdateJavaScript()
     {
-        await JSRuntime.InvokeVoidAsync("displayJavaScriptOutput");
+        await JSRuntime.InvokeVoidAsync("displayJavaScriptOutput", JsCode);
     }
     public async Task UpdateCSharp()
     {

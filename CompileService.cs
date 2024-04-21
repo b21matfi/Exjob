@@ -51,7 +51,6 @@ namespace Services
         }
         public async Task<Assembly> Compile(string code)
         {
-            Console.WriteLine("compile code : " + code);
             await Init();
             
             SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(code, new CSharpParseOptions(LanguageVersion.Preview));

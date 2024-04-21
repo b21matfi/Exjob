@@ -3,17 +3,6 @@
 @inject CompileService CompileService
 
 
-    <textarea id="JavaScripttext" name="javascriptCode" placeholder="JavaScript code" spellcheck="false" @bind="JsCode"></textarea>
-    <textarea id="C#" class="C#" name="C#code" placeholder="C# code" spellcheck="false" @bind="csCode"></textarea>
-    <button type ="submit" @onclick="Run"> run</button>
-
-<div class="iframe-container split">
-    <iframe id="javascriptViewer"></iframe>
-    <iframe id="csharpViewer" @bind="ResultText"></iframe>
-    <pre>@CompileText</pre>
-</div>
-
-
 @code {
     private string csCode { get; set; }
     private string JsCode = "";
@@ -22,6 +11,9 @@
 
     private async Task Run()
     {
+        JsCode = await JSRuntime.InvokeAsync<String>("getJSText");
+        csCode = await JSRuntime.InvokeAsync<String>("getCText");
+        
         Console.WriteLine("CsCode: " + csCode + " Jscode: " + JsCode);
         if (JsCode != "")
         {
@@ -64,5 +56,19 @@
     }
 
 }
+
+<textarea id="JavaScripttext" name="javascriptCode" placeholder="JavaScript code" spellcheck="false" @bind="JsCode"></textarea>
+    <textarea id="C#" class="C#" name="C#code" placeholder="C# code" spellcheck="false" @bind="csCode"></textarea>
+    <button type ="submit" @onclick="Run"> run</button>
+
+<div class="iframe-container split">
+    <iframe id="javascriptViewer"></iframe>
+    <iframe id="csharpViewer" @bind="ResultText"></iframe>
+    <pre>@CompileText</pre>
+</div>
+
+
+
+
 
 

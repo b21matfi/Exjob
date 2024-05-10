@@ -9,7 +9,7 @@
     private string JsCode = "";
     private string ResultText { get; set; }
     private string CompileText { get; set; }
-    private int maxCount = 250;
+    private int maxCount = 2000;
     private int currentCount = 0;
     private int numA;
     Random rnd = new Random();
@@ -40,12 +40,22 @@
     }
     private async Task GenJsSentence()
     { 
-        example = "<p id='demo'></p> <script> document.getElementById('demo').innerHTML = " + quete + Faker.Lorem.Paragraph() + quete + "</script>";
+        example = "<p id='demo'></p> <script> document.getElementById('demo').innerHTML = " + quete + Faker.Lorem.Paragraph(10) + quete + "</script>";
         JsCode = example;
+    }
+    private async Task GenJsSentence20()
+    {
+        example = "<p id='demo'></p> <script> document.getElementById('demo').innerHTML = " + quete + Faker.Lorem.Paragraph(20) + quete + "</script>";
+        JsCode = example;
+    }
+    private async Task GenCsharpSentence20()
+    {
+        example = "using System.Text; namespace tester { public class RunClass { public string Run() { var sb = new StringBuilder(); sb.AppendLine(" + quete + Faker.Lorem.Paragraph(20) + quete + ");  return sb.ToString(); } } }";
+        csCode = example;
     }
     private async Task GenCsharpSentence()
     {
-        example = "using System.Text; namespace tester { public class RunClass { public string Run() { var sb = new StringBuilder(); sb.AppendLine(" + quete + Faker.Lorem.Paragraph() +quete + ");  return sb.ToString(); } } }";
+        example = "using System.Text; namespace tester { public class RunClass { public string Run() { var sb = new StringBuilder(); sb.AppendLine(" + quete + Faker.Lorem.Paragraph(10) +quete + ");  return sb.ToString(); } } }";
         csCode = example;
     }
     private async Task GenCsharpMath()
@@ -57,55 +67,71 @@
     private async Task AutoRun()
     {
         for (currentCount = 0; currentCount < maxCount; currentCount++)
-        {
-            await GenJsMath();
-            await JSRuntime.InvokeVoidAsync("startTime");
-            await Run();
-            await JSRuntime.InvokeVoidAsync("endTime");
-            await Task.Delay(1000);
-            JsCode = "";
+    {
+    await GenJsMath();
+    await JSRuntime.InvokeVoidAsync("startTime");
+    await Run();
+        await JSRuntime.InvokeVoidAsync("endTime");
+        await Task.Delay(1000);
+        JsCode = "";
         }
-        await JSRuntime.InvokeVoidAsync("downloadTimeFile");
+        await JSRuntime.InvokeVoidAsync("downloadTimeFile", "JsMath" );
 
         for (currentCount = 0; currentCount < maxCount; currentCount++)
         {
-            await GenJsSentence();
-            await JSRuntime.InvokeVoidAsync("startTime");
-            await Run();
-            await JSRuntime.InvokeVoidAsync("endTime");
-            await Task.Delay(1000);
-            JsCode = "";
-        }
-        await JSRuntime.InvokeVoidAsync("downloadTimeFile");
+        await GenJsSentence();
+        await JSRuntime.InvokeVoidAsync("startTime");
+    await Run();
+    await JSRuntime.InvokeVoidAsync("endTime");
+    await Task.Delay(1000);
+    JsCode = "";
+    }
+    await JSRuntime.InvokeVoidAsync("downloadTimeFile", "JsSen10");
 
+    for (currentCount = 0; currentCount < maxCount; currentCount++)
+        {
+        await GenJsSentence20();
+        await JSRuntime.InvokeVoidAsync("startTime");
+        await Run();
+        await JSRuntime.InvokeVoidAsync("endTime");
+        await Task.Delay(1000);
+    JsCode = "";
+    }
+    await JSRuntime.InvokeVoidAsync("downloadTimeFile", "JsSen20");
+        
         for (currentCount = 0; currentCount < maxCount; currentCount++)
         {
-            GenCsharpSentence();
+            await GenCsharpSentence();
             await JSRuntime.InvokeVoidAsync("startTime");
             await Run();
-            await JSRuntime.InvokeVoidAsync("endTime");
             await Task.Delay(1000);
+            await JSRuntime.InvokeVoidAsync("endTimeCs");
             csCode = "";
         }
-        await JSRuntime.InvokeVoidAsync("downloadTimeFile");
-
+        await JSRuntime.InvokeVoidAsync("downloadTimeFile", "C#Sen10");
 
         for (currentCount = 0; currentCount < maxCount; currentCount++)
         {
-            GenCsharpMath();
+            await GenCsharpSentence20();
             await JSRuntime.InvokeVoidAsync("startTime");
             await Run();
-            await JSRuntime.InvokeVoidAsync("endTime");
             await Task.Delay(1000);
+            await JSRuntime.InvokeVoidAsync("endTimeCs");
+            csCode = "";
+        }
+        await JSRuntime.InvokeVoidAsync("downloadTimeFile", "C#Sen20");
+
+        for (currentCount = 0; currentCount < maxCount; currentCount++)
+        { 
+            await GenCsharpMath();
+            await JSRuntime.InvokeVoidAsync("startTime");
+            await Run();
+            await Task.Delay(1000);
+            await JSRuntime.InvokeVoidAsync("endTimeCs");
             csCode = "";
 
         }
-        await JSRuntime.InvokeVoidAsync("downloadTimeFile");
-        
-        
-
-
-
+        await JSRuntime.InvokeVoidAsync("downloadTimeFile", "C#Math");
     }
     private async Task UpdateJavaScript()
     {
@@ -117,8 +143,6 @@
         {
             CompileService.CompileLog = new List<string>();
             ResultText = await CompileService.CompileAndRun(csCode);
-            
-            Console.WriteLine(ResultText);
         }
         catch(Exception e)
         {
